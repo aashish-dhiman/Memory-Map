@@ -28,10 +28,9 @@ if (navigator.geolocation) {
         function (pos) {
             const latitude = pos.coords.latitude;
             const longitude = pos.coords.longitude;
-            // console.log(pos);
-            // console.log(latitude);
-            // console.log(longitude);
+
             const coords = [latitude, longitude];
+
             //displaying map using leaflet library
             const map = L.map("map").setView(coords, 15);
 
@@ -39,10 +38,23 @@ if (navigator.geolocation) {
                 map
             );
 
-            L.marker(coords)
-                .addTo(map)
-                .bindPopup("A pretty CSS3 popup.<br> Easily customizable.")
-                .openPopup();
+            map.on("click", function (event) {
+                console.log(event);
+                const { lat, lng } = event.latlng;
+                L.marker([lat, lng])
+                    .addTo(map)
+                    .bindPopup(
+                        L.popup({
+                            maxWidth: 250,
+                            minWidth: 50,
+                            autoClose: false,
+                            closeOnClick: false,
+                            className: "running-popup",
+                        })
+                    )
+                    .setPopupContent("Working")
+                    .openPopup();
+            });
         },
         function () {
             alert("Please allow location access");
