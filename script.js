@@ -72,6 +72,8 @@ class App {
     constructor() {
         this._getPosition();
 
+        this._getLocalStorage();
+
         form.addEventListener("submit", this._newWorkout.bind(this));
 
         inputType.addEventListener("change", this._toggleElevationField);
@@ -105,6 +107,10 @@ class App {
         );
 
         this.#map.on("click", this._showForm.bind(this));
+        //adding marker from local storage here as it requires to load map first otherwise through error
+        this.#workouts.forEach((work) => {
+            this._displayMarker(work);
+        });
     }
 
     _showForm(event) {
@@ -172,6 +178,8 @@ class App {
         this._displayWorkout(workout);
         //hiding the form
         this._hideForm();
+        //storing the workout in local storage
+        this._setLocalStorage();
     }
 
     _hideForm() {
@@ -258,6 +266,7 @@ class App {
         //adding html
         form.insertAdjacentHTML("afterend", html);
     }
+
     _movePopup(e) {
         const workoutEl = e.target.closest(".workout");
         if (!workoutEl) return;
@@ -266,6 +275,27 @@ class App {
             (el) => el.id === workoutEl.dataset.id
         );
         this.#map.setView(workout.coords, 15);
+    }
+
+    _setLocalStorage() {
+        localStorage.setItem("workout", JSON.stringify(this.#workouts));
+    }
+
+    _getLocalStorage() {
+        const data = JSON.parse(localStorage.getItem("workout"));
+        // console.log(data);
+        if (!data) return;
+
+        this.#workouts = data;
+        //adding to history
+        this.#workouts.forEach((work) => {
+            this._displayWorkout(work);
+        });
+    }
+    //public method to clear the location and storage
+    reset() {
+        localStorage.clear();
+        location.reload();
     }
 }
 
