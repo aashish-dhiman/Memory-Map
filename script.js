@@ -75,6 +75,8 @@ class App {
         form.addEventListener("submit", this._newWorkout.bind(this));
 
         inputType.addEventListener("change", this._toggleElevationField);
+
+        containerWorkouts.addEventListener("click", this._movePopup.bind(this));
     }
 
     //protected fields
@@ -255,6 +257,15 @@ class App {
 
         //adding html
         form.insertAdjacentHTML("afterend", html);
+    }
+    _movePopup(e) {
+        const workoutEl = e.target.closest(".workout");
+        if (!workoutEl) return;
+        // console.log(workoutEl);
+        const workout = this.#workouts.find(
+            (el) => el.id === workoutEl.dataset.id
+        );
+        this.#map.setView(workout.coords, 15);
     }
 }
 
